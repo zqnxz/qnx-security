@@ -1,13 +1,20 @@
-local currentKey;
+Handler = {};
+Handler.__index = Handler;
+
+function Handler:formatEvent(event)
+  return string.format('%s:%s', GetCurrentResourceName(), event);
+end
+
+currentKey = 0;
 
 Citizen.CreateThread(function()
   repeat
     Citizen.Wait(0)
   until NetworkIsSessionStarted();
 
-  events.execute('server', 'requestKey');
+  Common:triggerEncryptedEvent('requestKey');
 end);
 
-events.execute('isNet', 'receiveKey', function(key)
+Common:registerEncryptedEvent('receiveKey', function(key)
   currentKey = key;
 end);
